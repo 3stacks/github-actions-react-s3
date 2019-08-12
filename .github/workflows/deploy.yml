@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-    - uses: ./ci
+    - uses: ./github/workflows/ci
     - name: Deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
