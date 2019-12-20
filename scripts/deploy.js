@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
 const fs = require('fs');
 const glob = require('glob');
 const mimeTypes = require('mime-types');
@@ -13,16 +12,17 @@ AWS.config = new AWS.Config({
     region: process.env.AWS_DEFAULT_REGION
 });
 
-glob('./public/**/*', {}, (err, files) => {
+const s3 = new AWS.S3();
+
+glob('./build/**/*', {}, (err, files) => {
     files.forEach(file => {
         if (!fs.lstatSync(file).isDirectory()) {
             const fileContents = fs.readFileSync(`./${file}`);
             const fileMime = mimeTypes.lookup(file);
-
             s3.upload(
                 {
                     Bucket: 'github-actions-react-demo',
-                    Key: file.replace('./public/', ''),
+                    Key: file.replace('./build/', ''),
                     Body: fileContents,
                     ContentType: fileMime
                 },
@@ -31,7 +31,7 @@ glob('./public/**/*', {}, (err, files) => {
                     if (err) {
                         throw new Error(err.message);
                     }
-
+                    
                     console.log(data);
                 }
             );
